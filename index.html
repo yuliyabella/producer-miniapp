@@ -431,7 +431,7 @@ var FALLBACK={"__SEED__":true};
 /*__LOAD__*/
 load(function(saved){
   if(saved){try{D=JSON.parse(saved);migrate();render();return}catch(e){}}
-  fetch('data.json?v='+Date.now()).then(function(r){if(!r.ok)throw 0;return r.json()})
+  fetch('https://yuliyabella.github.io/producer-miniapp/data.json?v='+Date.now()).then(function(r){if(!r.ok)throw 0;return r.json()})
     .then(function(j){D=j;migrate();render();save()})
     .catch(function(){ if(FALLBACK.__SEED__){var n=document.createElement('div');n.className='demo';
       n.textContent='Не найден data.json рядом с приложением — положи оба файла в одну папку.';app.appendChild(n);} });
