@@ -217,7 +217,9 @@ function render(){
   /* ШАПКА */
   h+='<div class="hero">';
   if(D.header && D.header.photo){
-    h+='<img class="hero-photo" src="'+D.header.photo+'" alt="Юлия">';
+    var photoSrc=D.header.photo;
+    if(!/^https?:/.test(photoSrc)) photoSrc='https://yuliyabella.github.io/producer-miniapp/'+photoSrc;
+    h+='<img class="hero-photo" src="'+photoSrc+'" alt="Юлия">';
     h+='<div class="hero-txt onphoto">';
   } else {
     h+='<div class="hero-ph"><div class="mono">Ю</div></div><div class="hero-txt">';
@@ -260,7 +262,7 @@ function render(){
   h+='</div>';
 
   /* УРОКИ */
-  h+='<div class="card"><div class="hd"><span class="lbl">уроки · '+esc(D.courseName.mine)+'</span><span class="side">залито '+lDone+' из '+mini.length+'</span></div>';
+  h+='<div class="card"><div class="hd"><span class="lbl">уроки · '+esc((D.courseName&&D.courseName.mine)||(D.header&&D.header.app)||'курс')+'</span><span class="side">залито '+lDone+' из '+mini.length+'</span></div>';
   D.modules.forEach(function(m){
     var ls=mini.filter(function(l){return l.module===m.id}); if(!ls.length)return;
     var md=ls.filter(function(l){return l.stage===3}).length, open=openMods[m.id];
