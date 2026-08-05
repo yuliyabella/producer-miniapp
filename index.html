@@ -218,7 +218,7 @@ function render(){
   h+='<div class="hero">';
   if(D.header && D.header.photo){
     var photoSrc=D.header.photo;
-    if(!/^https?:/.test(photoSrc)) photoSrc='https://yuliyabella.github.io/producer-miniapp/'+photoSrc;
+    if(!/^(https?:|data:)/.test(photoSrc)) photoSrc='https://yuliyabella.github.io/producer-miniapp/'+photoSrc;
     h+='<img class="hero-photo" src="'+photoSrc+'" alt="Юлия">';
     h+='<div class="hero-txt onphoto">';
   } else {
