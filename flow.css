@@ -71,3 +71,5 @@
 .content-success{display:grid;gap:14px;margin:0 0 24px;padding:18px;background:linear-gradient(135deg,#e1faf5,#e5f3fb);border-radius:20px}.content-success h3{margin:0}.success-row{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px}.success-row .project-progress{width:100%;margin:0}.success-row small{font-weight:500;color:#527c86}
 
 .success-row .project-progress{height:10px;background:#c5e3e7;border:1px solid #b0d6db;flex-basis:100%}.success-row .project-progress i{background:linear-gradient(90deg,#67e5da,#27b7ca)}
+
+.fact-history{margin:20px 0;padding:18px;border:1px solid #c0e5e7;border-radius:18px;background:#f8ffff}.fact-history-row{display:flex;align-items:center;gap:12px;justify-content:space-between;padding:12px 0;border-top:1px solid #dcedef}.fact-history-row>span{min-width:0;display:grid;gap:4px}.fact-history-row small{font-size:11px;overflow-wrap:anywhere}.fact-history-row.cancelled b{text-decoration:line-through;color:#75949b}.fact-history-row button{flex-shrink:0}
