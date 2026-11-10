@@ -15,20 +15,35 @@ export function diffRecords(before,after){
 export class PlannerSync{
   constructor({key,onState,onStatus}){
     this.key=key+'-server-queue-v1';this.cacheKey=key;this.onState=onState;this.onStatus=onStatus;
-    this.apiRoot=location.origin==='https://video.belyaevayulia.ru'?'/planner-api':'https://video.belyaevayulia.ru/planner-api';this.queue=[];this.busy=false;this.ready=false;this.conflict=false;this.revision=-1;
+    this.apiRoots=['https://clodya.201-10-80-14.sslip.io/planner-api',location.origin==='https://video.belyaevayulia.ru'?'/planner-api':'https://video.belyaevayulia.ru/planner-api'];this.apiRoot=this.apiRoots[0];this.endpointConfirmed=false;this.queue=[];this.busy=false;this.ready=false;this.conflict=false;this.revision=-1;
   }
   status(kind,message){this.onStatus({kind,message,pending:this.queue.length});}
-  async request(path,body){
-    const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),25000);
+  async requestAt(root,path,body,controller=new AbortController()){
+    const timeout=setTimeout(()=>controller.abort(),12000);
     try{
-      const r=await fetch(this.apiRoot+path,{method:body?'POST':'GET',headers:{Authorization:'tma '+this.auth,...(body?{'Content-Type':'application/json'}:{})},body:body?JSON.stringify(body):undefined,signal:controller.signal,cache:'no-store'});
+      const r=await fetch(root+path,{method:body?'POST':'GET',headers:{Authorization:'tma '+this.auth,...(body?{'Content-Type':'application/json'}:{})},body:body?JSON.stringify(body):undefined,signal:controller.signal,cache:'no-store'});
       if(!r.ok){const err=Error(r.status===401?'Открой приложение заново через кнопку Клоди.':r.status===409?'Эта запись изменилась в другом окне.':'Сервер пока не подтвердил сохранение.');err.status=r.status;throw err;}
       return await r.json();
     }catch(err){
-      if(err.name==='AbortError')throw Error('Сервер не ответил за 25 секунд. Проверь интернет и нажми «Повторить подключение».');
-      if(err instanceof TypeError)throw Error('Не удалось связаться с сервером. Проверь интернет и повтори подключение.');
+      if(err.name==='AbortError')throw Error('Не удалось подключиться за 12 секунд. Нажми «Повторить подключение».');
+      if(err instanceof TypeError)throw Error('Нет соединения с записями Клоди. Нажми «Повторить подключение».');
       throw err;
     }finally{clearTimeout(timeout);}
+  }
+  async readAvailable(path){
+    const controllers=this.apiRoots.map(()=>new AbortController());
+    try{
+      const result=await new Promise((resolve,reject)=>{
+        let pending=this.apiRoots.length;const errors=[];
+        this.apiRoots.forEach((root,i)=>this.requestAt(root,path,undefined,controllers[i]).then(value=>resolve({root,value}),err=>{errors.push(err);if(!--pending)reject(errors.find(e=>e.status===401)||errors[0]);}));
+      });
+      this.apiRoot=result.root;this.endpointConfirmed=true;return result.value;
+    }finally{controllers.forEach(c=>c.abort());}
+  }
+  async request(path,body){
+    if(!this.endpointConfirmed){if(!body)return this.readAvailable(path);await this.readAvailable('/state');}
+    try{return await this.requestAt(this.apiRoot,path,body);}
+    catch(err){if(!err.status){this.endpointConfirmed=false;if(!body)return this.readAvailable(path);}throw err;}
   }
   async connect(local){
     this.auth=window.Telegram?.WebApp?.initData||'';
