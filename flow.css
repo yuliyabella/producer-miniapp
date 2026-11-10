@@ -35,3 +35,5 @@
 .carousel-stretch{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:13px 15px;border:1px solid #f1d9b9;border-radius:14px;background:linear-gradient(120deg,#fff2df,#fffaf1);margin:14px 0}.carousel-stretch>span{font-size:9px;letter-spacing:.07em;color:#c58d4e;font-weight:800}.carousel-stretch>strong{font-size:13px;color:#996b36}.carousel-stretch>small{font-size:10px;color:#a29481}
 
 .goal-plan-targets strong small{font-size:12px;font-weight:400;color:#77959e}.goal-plan-targets>div>small{font-weight:600;color:#5e8c98}.goal-plan-targets>div:last-child>small{color:#a1835e}
+
+.sales-milestones strong{font-size:17px}.sales-products .sales-milestones strong{font-size:15px}.sales-overview-breakdown>span{gap:6px}.sales-overview-breakdown small{font-size:10px}
