@@ -13,6 +13,8 @@ export function validateState(s){
  if(key==='content'&&[['funnel',300],['codeword',100],['destination',2000]].some(([k,n])=>r[k]!==undefined&&!string(r[k],n)))throw Error('Проверь поля воронки.');
  if(key==='content'&&r.steps!==undefined&&(!Array.isArray(r.steps)||r.steps.length>100||r.steps.some(step=>!step||!string(step.title,300)||!string(step.taskId||'',100))))throw Error('Проверь шаги воронки.');
  if(key==='content'&&r.goalType!==undefined&&(r.goalType!=='content-output'||typeof r.goalMonth!=='string'||!/^20\d{2}-(0[1-9]|1[0-2])$/.test(r.goalMonth)||['dailyReels','reelsTarget','funnelsTarget'].some(k=>!Number.isInteger(r[k])||r[k]<1||r[k]>1000)))throw Error('Проверь цель контента.');
+ if(key==='content'&&r.restDays!==undefined&&(!Array.isArray(r.restDays)||r.restDays.length>366||r.restDays.some(d=>!validDate(d))))throw Error('Проверь выходные.');
+ if(key==='content'&&(r.publicationMode!==undefined&&!['ordinary','trial'].includes(r.publicationMode)||r.publishedDate!==undefined&&!validDate(r.publishedDate)))throw Error('Проверь публикацию.');
  if(key==='content'&&r.cover!==undefined&&!['none','slide','cosmic','robot','portrait'].includes(r.cover))throw Error('Не удалось проверить обложку.');
  if(key==='payments'&&(!validDate(r.date)||!['once','monthly','yearly'].includes(r.repeat)||(r.amount!==null&&(!Number.isFinite(r.amount)||r.amount<0||r.amount>1e10))||!['RUB','USD','EUR'].includes(r.currency)||!Number.isInteger(r.remind)||r.remind<0||r.remind>30||!Array.isArray(r.paid)||r.paid.length>2400||!r.paid.every(validDate)))throw Error('Не удалось проверить платежи.');
  }}
