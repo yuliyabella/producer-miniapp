@@ -1,0 +1,23 @@
+export const STAGES=['Идея','Сценарий','Съёмка','Монтаж','Готово','Опубликовано'];
+export const today=()=>new Intl.DateTimeFormat('sv-SE',{timeZone:'Europe/Moscow'}).format(new Date());
+export function addDays(date,n){const d=new Date(date+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10);}
+export function initialState(){return {version:1,tasks:[],events:[],content:[],payments:[],notes:{},updatedAt:null};}
+export function validDate(s){if(typeof s!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(s))return false;const d=new Date(s+'T12:00:00Z');return !Number.isNaN(+d)&&d.toISOString().slice(0,10)===s;}
+export function validateState(s){
+ if(!s||s.version!==1||!['tasks','events','content','payments'].every(k=>Array.isArray(s[k])&&s[k].length<=10000)||!s.notes||typeof s.notes!=='object'||Array.isArray(s.notes))throw Error('Это не копия данных Клоди версии 1.');
+ const string=(v,n=12000)=>typeof v==='string'&&v.length<=n;
+ for(const key of ['tasks','events','content','payments']){const ids=new Set();for(const r of s[key]){if(!r||!string(r.id,100)||ids.has(r.id)||!string(r.title,300)||!r.title.trim()||!string(r.note))throw Error('В копии есть повреждённые записи.');ids.add(r.id);
+ if(key==='tasks'&&(!(r.date===''||validDate(r.date))||!['work','personal'].includes(r.category)||typeof r.done!=='boolean'||typeof r.focus!=='boolean'))throw Error('Не удалось проверить задачи.');
+ if(key==='events'&&(!validDate(r.date)||!/^([01]\d|2[0-3]):[0-5]\d$/.test(r.time)||!/^([01]\d|2[0-3]):[0-5]\d$/.test(r.end)||r.end<=r.time||!['work','personal'].includes(r.category)))throw Error('Не удалось проверить расписание.');
+ if(key==='content'&&(!STAGES.includes(r.stage)||!['Reels','Пост','Stories','Урок','Другое'].includes(r.format)||!['Instagram','Telegram','Платформа','Другое'].includes(r.channel)||!(r.date===''||validDate(r.date))||!string(r.link,2000)))throw Error('Не удалось проверить контент.');
+ if(key==='content'&&r.cover!==undefined&&!['none','slide','cosmic','robot','portrait'].includes(r.cover))throw Error('Не удалось проверить обложку.');
+ if(key==='payments'&&(!validDate(r.date)||!['once','monthly','yearly'].includes(r.repeat)||!Number.isFinite(r.amount)||r.amount<0||r.amount>1e10||!['RUB','USD','EUR'].includes(r.currency)||!Number.isInteger(r.remind)||r.remind<0||r.remind>30||!Array.isArray(r.paid)||r.paid.length>2400||!r.paid.every(validDate)))throw Error('Не удалось проверить платежи.');
+ }}
+ for(const [d,note] of Object.entries(s.notes)){if(!validDate(d)||!string(note,20000))throw Error('Не удалось проверить заметки.');}
+ return {version:1,tasks:s.tasks,events:s.events,content:s.content,payments:s.payments,notes:Object.fromEntries(Object.entries(s.notes)),updatedAt:typeof s.updatedAt==='string'?s.updatedAt:null};
+}
+export function occurrence(p,n){if(n===0)return p.date;if(p.repeat==='once')return null;const [y,m,d]=p.date.split('-').map(Number);const month=m-1+(p.repeat==='monthly'?n:n*12);const first=new Date(Date.UTC(y,month,1));const last=new Date(Date.UTC(first.getUTCFullYear(),first.getUTCMonth()+1,0)).getUTCDate();return `${first.getUTCFullYear()}-${String(first.getUTCMonth()+1).padStart(2,'0')}-${String(Math.min(d,last)).padStart(2,'0')}`;}
+export function nextPayment(p){for(let n=0;n<2400;n++){const date=occurrence(p,n);if(!date)return null;if(!p.paid.includes(date))return date;}return null;}
+export function paymentsInMonth(payments,month){return payments.flatMap(p=>{const out=[];for(let n=0;n<2400;n++){const date=occurrence(p,n);if(!date||date.slice(0,7)>month)break;if(date.slice(0,7)===month)out.push({...p,due:date,isPaid:p.paid.includes(date)});}return out;}).sort((a,b)=>a.due.localeCompare(b.due));}
+export function safeUrl(v){try{const u=new URL(v);return ['https:','http:'].includes(u.protocol)?u.href:'';}catch{return '';}}
+export const escapeHtml=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
