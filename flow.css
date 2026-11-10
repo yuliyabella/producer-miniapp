@@ -37,3 +37,5 @@
 .goal-plan-targets strong small{font-size:12px;font-weight:400;color:#77959e}.goal-plan-targets>div>small{font-weight:600;color:#5e8c98}.goal-plan-targets>div:last-child>small{color:#a1835e}
 
 .sales-milestones strong{font-size:17px}.sales-products .sales-milestones strong{font-size:15px}.sales-overview-breakdown>span{gap:6px}.sales-overview-breakdown small{font-size:10px}
+
+.day-phrase{padding:12px 16px;margin:0 0 16px;border:1px solid #c9e9ec;border-radius:16px;background:linear-gradient(120deg,#ecfcfc,#fff7ec)}.day-phrase small{font-size:10px;color:#7398a1;letter-spacing:.04em}.day-phrase p{margin:5px 0 0;font-size:13px;line-height:1.6;color:#397487}@media(max-width:600px){.day-phrase{padding:10px 13px}.day-phrase p{font-size:12px}}

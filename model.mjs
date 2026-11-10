@@ -27,3 +27,13 @@ export function nextPayment(p){for(let n=0;n<2400;n++){const date=occurrence(p,n
 export function paymentsInMonth(payments,month){return payments.flatMap(p=>{const out=[];for(let n=0;n<2400;n++){const date=occurrence(p,n);if(!date||date.slice(0,7)>month)break;if(date.slice(0,7)===month)out.push({...p,due:date,isPaid:p.paid.includes(date)});}return out;}).sort((a,b)=>a.due.localeCompare(b.due));}
 export function safeUrl(v){try{const u=new URL(v);return ['https:','http:'].includes(u.protocol)?u.href:'';}catch{return '';}}
 export const escapeHtml=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+export function taskOnDate(r,date){
+ if(r.repeat!=='daily')return r;
+ if(date<r.date)return null;
+ return {...r,date,done:r.done||(r.completedDates||[]).includes(date)};
+}
+export function toggleTaskOnDate(r,date){
+ if(r.repeat!=='daily'){r.done=!r.done;return;}
+ const dates=r.completedDates||[];r.completedDates=dates.includes(date)?dates.filter(d=>d!==date):[...dates,date].sort();
+}
