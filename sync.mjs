@@ -15,7 +15,7 @@ export function diffRecords(before,after){
 export class PlannerSync{
   constructor({key,onState,onStatus}){
     this.key=key+'-server-queue-v1';this.cacheKey=key;this.onState=onState;this.onStatus=onStatus;
-    this.apiRoot='https://video.belyaevayulia.ru/planner-api';this.queue=[];this.busy=false;this.ready=false;this.conflict=false;this.revision=-1;
+    this.apiRoot=location.origin==='https://video.belyaevayulia.ru'?'/planner-api':'https://video.belyaevayulia.ru/planner-api';this.queue=[];this.busy=false;this.ready=false;this.conflict=false;this.revision=-1;
   }
   status(kind,message){this.onStatus({kind,message,pending:this.queue.length});}
   async request(path,body){
@@ -24,6 +24,10 @@ export class PlannerSync{
       const r=await fetch(this.apiRoot+path,{method:body?'POST':'GET',headers:{Authorization:'tma '+this.auth,...(body?{'Content-Type':'application/json'}:{})},body:body?JSON.stringify(body):undefined,signal:controller.signal,cache:'no-store'});
       if(!r.ok){const err=Error(r.status===401?'Открой приложение заново через кнопку Клоди.':r.status===409?'Эта запись изменилась в другом окне.':'Сервер пока не подтвердил сохранение.');err.status=r.status;throw err;}
       return await r.json();
+    }catch(err){
+      if(err.name==='AbortError')throw Error('Сервер не ответил за 25 секунд. Проверь интернет и нажми «Повторить подключение».');
+      if(err instanceof TypeError)throw Error('Не удалось связаться с сервером. Проверь интернет и повтори подключение.');
+      throw err;
     }finally{clearTimeout(timeout);}
   }
   async connect(local){
