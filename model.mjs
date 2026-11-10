@@ -1,5 +1,5 @@
 export const STAGES=['Идея','Сценарий','Съёмка','Монтаж','Готово','Опубликовано'];
-export const today=()=>new Intl.DateTimeFormat('sv-SE',{timeZone:'Europe/Moscow'}).format(new Date());
+export const today=()=>new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Barnaul'}).format(new Date());
 export function addDays(date,n){const d=new Date(date+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10);}
 export function initialState(){return {version:1,tasks:[],events:[],content:[],payments:[],notes:{},updatedAt:null};}
 export function validDate(s){if(typeof s!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(s))return false;const d=new Date(s+'T12:00:00Z');return !Number.isNaN(+d)&&d.toISOString().slice(0,10)===s;}
@@ -10,6 +10,7 @@ export function validateState(s){
  if(key==='tasks'&&(!(r.date===''||validDate(r.date))||!['work','personal'].includes(r.category)||typeof r.done!=='boolean'||typeof r.focus!=='boolean'))throw Error('Не удалось проверить задачи.');
  if(key==='events'&&(!validDate(r.date)||!/^([01]\d|2[0-3]):[0-5]\d$/.test(r.time)||!(r.end===''||/^([01]\d|2[0-3]):[0-5]\d$/.test(r.end)&&r.end>r.time)||!['work','personal'].includes(r.category)))throw Error('Не удалось проверить расписание.');
  if(key==='content'&&(!STAGES.includes(r.stage)||!['Reels','Пост','Stories','Урок','Другое'].includes(r.format)||!['Instagram','Telegram','Платформа','Другое'].includes(r.channel)||!(r.date===''||validDate(r.date))||!string(r.link,2000)))throw Error('Не удалось проверить контент.');
+ if(key==='content'&&[['funnel',300],['codeword',100],['destination',2000]].some(([k,n])=>r[k]!==undefined&&!string(r[k],n)))throw Error('Проверь поля воронки.');
  if(key==='content'&&r.cover!==undefined&&!['none','slide','cosmic','robot','portrait'].includes(r.cover))throw Error('Не удалось проверить обложку.');
  if(key==='payments'&&(!validDate(r.date)||!['once','monthly','yearly'].includes(r.repeat)||(r.amount!==null&&(!Number.isFinite(r.amount)||r.amount<0||r.amount>1e10))||!['RUB','USD','EUR'].includes(r.currency)||!Number.isInteger(r.remind)||r.remind<0||r.remind>30||!Array.isArray(r.paid)||r.paid.length>2400||!r.paid.every(validDate)))throw Error('Не удалось проверить платежи.');
  }}
