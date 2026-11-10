@@ -1,9 +1,9 @@
-import {publicationAward,adaptivePlan} from './adaptive-plan.mjs?v=sync-20261110aj';
-import {monthlyExpenseBudget} from './expenses.mjs?v=sync-20261110aj';
-import {salesProgress} from './sales.mjs?v=sync-20261110aj';
-import {contentMetrics,workingDays} from './goals.mjs?v=sync-20261110aj';
-import {PlannerSync} from './sync.mjs?v=sync-20261110aj';
-import {STAGES,today,addDays,initialState,validateState,taskOnDate,toggleTaskOnDate,safeUrl,escapeHtml as e,nextPayment,paymentsInMonth} from './model.mjs?v=sync-20261110aj';
+import {publicationAward,adaptivePlan} from './adaptive-plan.mjs?v=sync-20261110ak';
+import {monthlyExpenseBudget} from './expenses.mjs?v=sync-20261110ak';
+import {salesProgress} from './sales.mjs?v=sync-20261110ak';
+import {contentMetrics,workingDays} from './goals.mjs?v=sync-20261110ak';
+import {PlannerSync} from './sync.mjs?v=sync-20261110ak';
+import {STAGES,today,addDays,initialState,validateState,taskOnDate,toggleTaskOnDate,safeUrl,escapeHtml as e,nextPayment,paymentsInMonth} from './model.mjs?v=sync-20261110ak';
 const demo=new URLSearchParams(location.search).get('demo')==='1';
 const KEY=demo?'clodya-my-day-demo-v1':'clodya-my-day-v1';
 let cloud=null,cloudReady=demo,cloudError='',range='week',financeTab=new URLSearchParams(location.search).get('finance')==='expenses'?'expenses':'sales',salesData=null,salesError='';
