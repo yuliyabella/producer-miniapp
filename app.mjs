@@ -1,5 +1,5 @@
-import {PlannerSync} from './sync.mjs?v=sync-20261110d';
-import {STAGES,today,addDays,initialState,validateState,safeUrl,escapeHtml as e,nextPayment,paymentsInMonth} from './model.mjs?v=sync-20261110d';
+import {PlannerSync} from './sync.mjs?v=sync-20261110e';
+import {STAGES,today,addDays,initialState,validateState,safeUrl,escapeHtml as e,nextPayment,paymentsInMonth} from './model.mjs?v=sync-20261110e';
 const demo=new URLSearchParams(location.search).get('demo')==='1';
 const KEY=demo?'clodya-my-day-demo-v1':'clodya-my-day-v1';
 let cloud=null,cloudReady=demo,cloudError='',range='week',financeTab=new URLSearchParams(location.search).get('finance')==='sales'?'sales':'expenses',salesData=null,salesError='';
